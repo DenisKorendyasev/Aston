@@ -64,7 +64,7 @@ public class MyArrayList<E> implements List<E> {
     public void add(E element, int index)
     {
         checkingTheCapacity();
-        if (checkingForNegativeValue(index))
+        if (checkingForNegativeValue(index) && checkingGoingOutsideArray(index))
         {
             for (int i = size; i > index; i--) {
                 list[i] = list[i - 1];
@@ -80,7 +80,7 @@ public class MyArrayList<E> implements List<E> {
      */
     @Override
     public E get(int index) {
-        if (checkingForNegativeValue(index)) {
+        if (checkingForNegativeValue(index) && checkingGoingOutsideArray(index)) {
             return list[index];
         }
         return null;
@@ -172,6 +172,19 @@ public class MyArrayList<E> implements List<E> {
     }
 
     /**
+     * Проверка числа на правильное введённое значение
+     * @param value Число
+     * @return true
+     * @throws ArrayIndexOutOfBoundsException Если переданное число (индекс) вышел за пределы массива
+     */
+    private boolean checkingGoingOutsideArray(int value) {
+        if (value > size) {
+            throw new  ArrayIndexOutOfBoundsException("Выход за пределы массива");
+        }
+        return true;
+    }
+
+    /**
      * Увеличивает размер массива в 2 раза
      */
     private void increasingCapacity()
@@ -210,10 +223,25 @@ public class MyArrayList<E> implements List<E> {
     /**
      * @inheritDoc
      */
-    public void print() {
-        for (E es : list) {
-            System.out.print(es + " ");
+    @Override
+    public String toString() {
+        if (size==0)
+            return "[]";
+
+        int i = 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        for (E element : list){
+            if (element != null) {
+                if (i == size - 1) {
+                    stringBuilder.append(element).append("]");
+                    break;
+                }
+                stringBuilder.append(element).append(", ");
+            }
+            i++;
         }
+        return stringBuilder.toString();
+    }
     }
 
-}

@@ -18,8 +18,6 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
     private int size;
 
     public MyLinkedList() {
-        lastNode = new Node<E>(null, firstNode, null);
-        firstNode = new Node<E>(null, null, lastNode);
     }
 
     /**
@@ -28,24 +26,30 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
     @Override
     public void addFirst(E element)
     {
-        Node<E> next = firstNode;
-        next.setElement(element);
-        firstNode = new Node<>(null, null, next);
-        next.setPreviousNode(firstNode);
+       final Node<E> f = firstNode;
+       final Node<E> newNode = new Node<>(element, null, f);
+       firstNode = newNode;
+        if (f == null)
+            lastNode = newNode;
+        else
+            f.setPreviousNode(newNode);
         size++;
     }
+
     /**
      * @inheritDoc
      */
     @Override
     public void addLast(E element)
     {
-        Node<E> prev = lastNode;
-        prev.setElement(element);
-        lastNode = new Node<>(null, prev, null);
-        prev.setNextNode(lastNode);
+        final Node<E> l = lastNode;
+        final Node<E> newNode = new Node<>(element, l, null);
+        lastNode = newNode;
+        if (l == null)
+            firstNode = newNode;
+        else
+            l.setNextNode(newNode);
         size++;
-
     }
 
     /**
@@ -63,7 +67,7 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
     @Override
     public void add(E element, int index)
     {
-        if (checkingForNegativeValue(index))
+        if (checkingForNegativeValue(index) && checkingGoingOutsideArray(index))
         {
             Node<E> target = searchNodeInList(index);
             overwritingLinksToCreateNode(target, element);
@@ -78,7 +82,7 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
     @Override
     public E get(int index)
     {
-        if (checkingForNegativeValue(index)) {
+        if (checkingForNegativeValue(index) && checkingGoingOutsideArray(index)) {
             Node<E> target = searchNodeInList(index);
             return target.getElement();
         }
@@ -218,6 +222,19 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
     }
 
     /**
+     * Проверка числа на правильное введённое значение
+     * @param value Число
+     * @return true
+     * @throws ArrayIndexOutOfBoundsException Если переданное число (индекс) вышел за пределы массива
+     */
+    private boolean checkingGoingOutsideArray(int value) {
+        if (value > size) {
+            throw new  ArrayIndexOutOfBoundsException("Выход за пределы массива");
+        }
+        return true;
+    }
+
+    /**
      * Перезаписывает ссылки в дереве и удаляет переданный объект
      * @param node ссылка по которой находиться объект
      */
@@ -256,18 +273,25 @@ public class MyLinkedList<E> implements List<E>, LinkedList<E> {
         };
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
-    public void print()
-    {
-        Node<E> target = firstNode.getNextNode();
-        for (int i = 0; i < size; i++) {
-            System.out.print(target.element + "  ");
-            target = target.getNextNode();
+    public String toString() {
+        if (size == 0)
+            return "[]";
+
+        int j = 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[");
+        for (Node<E> i = firstNode; i != null; i = i.getNextNode()) {
+            if (j == size - 1) {
+                stringBuilder.append(i.getElement()).append("]");
+                break;
+            }
+            stringBuilder.append(i.getElement()).append(", ");
+            j++;
         }
+        return stringBuilder.toString();
     }
+
 
     /**
      * Внутренний класс, представляющий узел списка.

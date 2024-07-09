@@ -2,6 +2,8 @@
 import collection.impl.MyArrayList;
 import collection.impl.MyLinkedList;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -13,6 +15,7 @@ public class Main {
             list.add(i);
         }
         System.out.println(list);
+        System.out.println(list.get(10));
 
         MyLinkedList<Integer> list1 = new MyLinkedList<>();
         for (int i = 0; i < 10; i++) {

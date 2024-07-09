@@ -178,7 +178,7 @@ public class MyArrayList<E> implements List<E> {
      * @throws ArrayIndexOutOfBoundsException Если переданное число (индекс) вышел за пределы массива
      */
     private boolean checkingGoingOutsideArray(int value) {
-        if (value > size) {
+        if (value > size - 1) {
             throw new  ArrayIndexOutOfBoundsException("Выход за пределы массива");
         }
         return true;
